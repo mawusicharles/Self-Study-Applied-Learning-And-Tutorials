@@ -2,7 +2,7 @@
 title: "Macroeconomic Forcasting in R"
 author: "charles MAWUSI"
 date: "27/03/2022"
-output: html_document
+output: pdf_document
 ---
 
 This applied study in Time Series follows the **EdX** Macroeconomic forecasting model. The course was originally taught in Eviews. I replicated the codes in R following the insight from Struya Packages used includes among others;
