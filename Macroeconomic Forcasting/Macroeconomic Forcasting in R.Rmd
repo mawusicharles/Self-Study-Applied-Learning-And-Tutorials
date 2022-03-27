@@ -1,0 +1,25 @@
+---
+title: "Macroeconomic Forcasting in R"
+author: "charles MAWUSI"
+date: "27/03/2022"
+output: html_document
+---
+
+This applied study in Time Series follows the **EdX** Macroeconomic forecasting model. Although the course was thought in Eviews i replicated the codes in R insight from Struya. Package used in this model includes among others;
+
+* Forecast 
+* Tidyverse
+* timetk
+* lubricate
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Processing 
+```{r}
+
+```
+
+
+
