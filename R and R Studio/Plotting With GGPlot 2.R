@@ -37,8 +37,29 @@ ggplot(data = gapminder,
   ylab("Life Expenctancy")+
   ggtitle("Life Expectancy by Year in China")+
   theme_bw(base_size = 10)+
-  facet_wrap(~continent) # This breaks the graphs by continents
+  facet_wrap(~continent)+
+  theme(legend.position = "none")
 
-                                               
-  
+  # you can save and add things to your ggplot save the previous to an object 
+
+Life_expect<-ggplot(data = gapminder,
+                    aes(x=year, y=lifeExp, 
+                        group=country,
+                        color=continent))+
+                        geom_line()+
+                        xlab("year")+
+                        ylab("Life Expenctancy")+
+                        ggtitle("Life Expectancy by Year in China")+
+                        theme_bw(base_size = 10)+
+                        facet_wrap(~continent)+
+                        theme(legend.position = "none")
+                                                     
+Life_expect+theme(legend.position ="bottom") # This  add a legend to the original plot at the bottom 
+
+# formatting axis in the ggplot example 
+
+ggplot(data = China, aes(x=year, y=gdpPercap))+
+  geom_line(color="red")+
+  scale_y_log10(breaks=c(1000, 2000, 3000, 4000, 5000), labels=scales::dollar)+
+  xlim(c(1990, 2008))
 

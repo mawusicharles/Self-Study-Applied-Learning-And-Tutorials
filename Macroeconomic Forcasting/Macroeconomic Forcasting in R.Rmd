@@ -5,7 +5,7 @@ date: "27/03/2022"
 output: pdf_document
 ---
 
-This applied study in Time Series follows the **EdX** Macroeconomic forecasting model. The course was originally taught in Eviews. I replicated the codes in R following the insight from Struya Packages used includes among others;
+This applied study in Time Series follows the **EdX** Macroeconomic forecasting model. The course was originally taught in Eviews. I replicated the codes in R following insight from Struya. Packages used includes among others;
 
 * Forecast 
 * Tidyverse
@@ -45,7 +45,7 @@ ARMA_et<-read.csv(file = file.choose(), header = T)
 str(ARMA_et)
 ```
 
-The mean of the data series in 3 decimal places is **`r round(mean(ARMA_et$et), 3)`** and the standard deviation is **`r round(sd(ARMA_et$et), 3)`**. Missing values in the date series is = **`r sum(is.null(ARMA_et))`**
+The mean of the data series in 3 decimal places is **`r round(mean(ARMA_et$et), 3)`** and the standard deviation is **`r round(sd(ARMA_et$et), 3)`**. Missing values in the data series is = **`r sum(is.null(ARMA_et))`**
 
 
 ```{r plot_data}
@@ -53,6 +53,8 @@ The mean of the data series in 3 decimal places is **`r round(mean(ARMA_et$et), 
 ARMA_et %>% plot.ts() %>% abline(h=mean(ARMA_et$et), col="red")
 
 ```
+
+## Simulating AR(1), MA(1), ARMA(1,1) Process 
 
 ```{r simulate_AR(1)}
 
@@ -64,7 +66,6 @@ n=500
 for (i in 2:500){
   y_AR[i]<-3 + 0.55*(y_AR[i-1])+ARMA_et$et[i]
 }
-head(y_AR[5]) # fifth element 
 
 ```
 ```{r simulate_MA(1)}
@@ -77,17 +78,19 @@ n=500
 for (i in 2:500){
   y_MA[i]<--2.5 + ARMA_et$et[i]+0.7*ARMA_et$et[i-1]
 }
-y_MA[5]
- 
+
 ```
+The fifth observation of the MA(1) model is **`r round(y_MA[5], 3)`** and that of the AR(1) model is **`r round(y_AR[5], 3)`**
+
+
 ```{r plot_MA_AR_series}
 
 # Plot the ACF and PAC for the AR(1) and MA(1) Processes
 
 par(mfrow =c(1, 3))
 ts.plot(y_AR, main="Autoregressive-AR(1) Model")
-acf(y_AR, "main=ACF(AR1)")
-pacf(y_AR, main="PACF(AR1)")
+acf(y_AR, main="ACF AR(1)")
+pacf(y_AR, main="PACF AR(1)")
 
 par(mfrow =c(1, 3))
 ts.plot(y_MA, main="Moving Average MA(1) Model")
@@ -95,4 +98,75 @@ acf(y_MA, main ="ACF MA(1)")
 pacf(y_MA, main="PACF MA(1)")
 
 ```
+
+```{r}
+# Generating an ARMA process  yt = 0.5 + 0.5yt-1 +0.70et-1 + et 
+
+ARMA<-as.vector(1)
+ARMA[1]<-0
+n=500
+for (i in 2:n){
+  ARMA[i]<-0.5+0.55*ARMA[i-1]+ARMA_et$et[i]+0.7*ARMA_et$et[i-1]
+}
+
+```
+The fifth observation of the simulate ARMA is **`r round(ARMA[5], 3)`**
+
+
+### Limit all Series ACF and PACF to A Maximum of 2 lags 
+
+```{r  laggedACFPACF}
+
+# Plot ACF and PACF for all the series with maximum lags 1 and 2 
+
+par(mfrow =c(1, 3))
+ts.plot(ARMA_et$et,  main="Innovation (et)")
+acf(ARMA_et$et, lag.max = 2, main="ACF et ")
+pacf(ARMA_et$et,lag.max = 2, main="PACF et")
+
+par(mfrow =c(1, 3))
+ts.plot(y_AR, main="Autoregressive-AR(1) Model")
+acf(y_AR,lag.max = 2, main="ACF AR(1)")
+pacf(y_AR,lag.max = 2,  main="PACF AR(2)")
+
+par(mfrow =c(1, 3))
+ts.plot(y_MA, main="Moving Average MA(1) Model")
+acf(y_MA, lag.max = 2, main ="ACF MA(1)")
+pacf(y_MA, lag.max = 2,  main="PACF MA(1)")
+
+par(mfrow =c(1, 3))
+ts.plot(ARMA, main="Moving Average ARMA(1, 1) ")
+acf(y_MA,lag.max = 2,  main ="ACF ARMA(1)")
+pacf(y_MA, lag.max = 2, main="PACF ARMA(1)")
+```
+
+```{r PACF Regression }
+library(tidyr)
+lm(y_AR~lag(y_AR, 1)+lag(y_AR, 2)) %>% summary()  # max of 2 lags 
+
+```
+### simulating and selecting appropriate models 
+
+```{r}
+library(forecast)
+library(tidyverse)
+
+Et<-rnorm(500, 0, 1)
+yt<-as.vector(1)
+yt[1]<-0
+n=500
+for (i in 2:n) {
+  yt[i]<-0.5+0.7*yt[i-1]+Et[i]
+}
+yt %>% as.ts() %>% ts.plot()
+par(mfrow=c(1, 2))
+acf(yt)
+pacf(yt)
+Box.test(yt, lag = 10)
+arimamodel<-auto.arima(yt)
+summary(arimamodel)
+plot(arimamodel$residuals)
+```
+The residual plots and tests from the **Arima model** selection procedure suggests an AR(1) process as a the best model that fit the yt time series data. 
+
 
