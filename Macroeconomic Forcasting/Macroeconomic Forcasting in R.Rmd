@@ -166,7 +166,22 @@ Box.test(yt, lag = 10)
 arimamodel<-auto.arima(yt)
 summary(arimamodel)
 plot(arimamodel$residuals)
+acf(arimamodel$residuals)
+Box.test(arimamodel$residuals)
+
 ```
 The residual plots and tests from the **Arima model** selection procedure suggests an AR(1) process as a the best model that fit the yt time series data. 
 
+### Aplication Real Data 
+
+Here i use the new tidyquant package to extract data on renewable or grean energy stock index from NASDAQ
+
+```{r NASDAQ}
+
+library(tidyquant)
+
+tk<-tq_exchange("NASDAQ") %>% tq_get("AAPL", from = "2007-01-01", to = "2016-12-31") %>% head()
+tk
+
+```
 
