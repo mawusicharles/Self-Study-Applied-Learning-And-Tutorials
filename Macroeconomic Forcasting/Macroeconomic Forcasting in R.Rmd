@@ -183,5 +183,6 @@ library(tidyquant)
 tk<-tq_exchange("NASDAQ") %>% tq_get("AAPL", from = "2007-01-01", to = "2016-12-31") %>% head()
 tk
 
+
 ```
 
